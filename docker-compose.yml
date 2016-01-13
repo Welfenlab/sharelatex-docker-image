@@ -1,0 +1,17 @@
+sharelatex:
+#  image: sharelatex/sharelatex:latest
+  build: ./sharelatex-docker-image-master
+  ports:
+    - 8080:80
+  links:
+   - redis
+   - mongo
+  volumes:
+    - /mnt/sharelatex:/var/lib/sharelatex
+  environment:
+        - "SHARELATEX_MONGO_URL=mongodb://mongo/sharelatex"
+        - "SHARELATEX_REDIS_HOST=redis"
+redis:
+  image: redis
+mongo:
+  image: mongo:3.2.0
