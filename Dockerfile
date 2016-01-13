@@ -14,8 +14,7 @@ RUN adduser --system --group --home /var/www/sharelatex --no-create-home sharela
 
 # Install ShareLaTeX
 RUN apt-get install -y git python
-RUN git clone -b release https://github.com/sharelatex/sharelatex.git /var/www/sharelatex
-RUN cd /var/www/sharelatex && git pull origin release
+RUN git clone -b v0.2.0 https://github.com/sharelatex/sharelatex.git /var/www/sharelatex
 
 # zlib1g-dev is needed to compile the synctex binaries in the CLSI during `grunt install`.
 RUN apt-get install -y zlib1g-dev
@@ -29,7 +28,6 @@ RUN cd /var/www/sharelatex/web; \
 	grunt compile:minify;
 
 # Install Nginx as a reverse proxy
-run apt-get update
 RUN apt-get install -y nginx;
 RUN rm /etc/nginx/sites-enabled/default
 ADD nginx/nginx.conf /etc/nginx/nginx.conf
@@ -73,7 +71,6 @@ RUN rm -r /install-tl-unx; \
 	rm install-tl-unx.tar.gz
 
 ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/texlive/2015/bin/x86_64-linux/
-RUN apt-get update
 RUN tlmgr install latexmk
 
 # Install Aspell
@@ -82,14 +79,10 @@ RUN apt-get install -y aspell aspell-en aspell-af aspell-am aspell-ar aspell-ar-
 # Install unzip for file uploads
 RUN apt-get install -y unzip
 
-# Install imagemagick for image conversions
-RUN apt-get install -y imagemagick optipng
-
 # phusion/baseimage init script
 ADD 00_regen_sharelatex_secrets.sh  /etc/my_init.d/00_regen_sharelatex_secrets.sh
 ADD 00_make_sharelatex_data_dirs.sh /etc/my_init.d/00_make_sharelatex_data_dirs.sh
 ADD 00_set_docker_host_ipaddress.sh /etc/my_init.d/00_set_docker_host_ipaddress.sh
-ADD 99_migrate.sh /etc/my_init.d/99_migrate.sh
 
 # Install ShareLaTeX settings file
 RUN mkdir /etc/sharelatex
